@@ -61,25 +61,41 @@ function loadRecipes() {
 
 
 function buildContents() {
-
+  deleteTableOfContents();
+  
   recipes.forEach(function(recipe, i) {
     var li = document.createElement('li');
     var link = document.createElement('button');
     link.innerHTML = recipe[0].name;
     var copy = document.createElement('button');
     copy.innerHTML = '📋';
+    let deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '🚫';
     li.appendChild(link);
     li.appendChild(copy);
+    li.appendChild(deleteBtn);
     recipeList.appendChild(li);
     link.addEventListener('click', function() {
       viewRecipePage(i);
     });
     copy.addEventListener('click', function() {
-      copyRecipe(recipes[i],this);
+      copyRecipe(recipes[i], this);
     });
-  
+    deleteBtn.addEventListener('click', function() {
+      if(verifyDeleteRecipe()){
+      deleteRecipe(recipes[i], this);
+      }
+
+    });
 
   });
+}
+
+function deleteTableOfContents() {
+    let list = document.getElementById("recipe-list");
+    while (list.hasChildNodes()) {
+        list.removeChild(list.firstChild);
+    }
 }
 
 function viewRecipePage(i) {
@@ -87,22 +103,54 @@ function viewRecipePage(i) {
   var chosenRecipe = recipes[i];
   var recipeJson = JSON.stringify(chosenRecipe);
   sessionStorage.setItem('recipe', recipeJson);
-  window.location.href ='recipe.html';
+  window.location.href = 'recipe.html';
 }
 
-function copyRecipe(recipe, btn){
+function copyRecipe(recipe, btn) {
   var recipeString = JSON.stringify(recipe);
 
   navigator.clipboard.writeText(recipeString);
   btn.innerHTML = "Copied!";
   setTimeout(function() {
     btn.innerHTML = "📋";
-  
+
   }, 1000);
 }
 
+function verifyDeleteRecipe(){
+  
+  let confirmation = confirm("Are you sure you want to delete this recipe?");
+  
+  if (confirmation) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
-function onLoad(){
+function deleteRecipe(recipe, btn) {
+
+  const index = recipes.indexOf(recipe);
+  recipes.splice(index, 1);
+  buildContents();
+  //saveRecipes();
+  let recipeList = document.getElementById("recipe-list");
+  if (!recipeList.hasChildNodes()) {
+    let link = document.createElement('button');
+    link.innerHTML = 'Add New Recipe';
+    recipeList.appendChild(link);
+    link.addEventListener('click', function() {
+      window.location.href ='addRecipe.html';
+    });
+  }
+}
+
+function saveRecipes() {
+  let recipesJson = JSON.stringify(recipes);
+  localStorage.setItem('recipes', recipesJson);
+}
+
+function onLoad() {
   loadRecipes();
   buildContents();
 }

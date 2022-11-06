@@ -5,27 +5,27 @@ var runningTimer;
 var currentRecipe;
 var interval = 100;
 
+let directionsList = document.getElementById("directions-list");
+let nextButton = document.getElementById("next-button");
+let startButton = document.getElementById("start-button");
+let currentStepText = document.getElementById("current-step");
+let currentStepTime = document.getElementById("current-step-time");
+let continuous = document.getElementById("continuous");
+let timer = document.getElementById("timer");
+let testMode = document.getElementById("test-mode");
 
-var nextButton = document.getElementById("next-button");
-var startButton = document.getElementById("start-button");
-var directionsList = document.getElementById("directions-list");
-var currentStepText = document.getElementById("current-step");
-var currentStepTime = document.getElementById("current-step-time");
-var continuous = document.getElementById("continuous");
-var timer = document.getElementById("timer");
-var testMode = document.getElementById("test-mode");
+let timerDoneSound = document.getElementById("timer-done-sound");
+let sounds = document.getElementById("sounds");
 
-var timerDoneSound = document.getElementById("timer-done-sound");
-var sounds = document.getElementById("sounds");
 
 function init() {
 
-setCurrentRecipe();
+  setCurrentRecipe();
   currentRecipe.forEach(function(currentstep) {
-    var direction = document.createElement("li");
+    let direction = document.createElement("li");
     direction.innerHTML = currentstep.direction
-    if(currentstep.time > 0){
-    direction.innerHTML += " (" + formatTime(currentstep.time*60) + ")";
+    if (currentstep.time > 0) {
+      direction.innerHTML += " (" + formatTime(currentstep.time * 60) + ")";
     }
     directionsList.appendChild(direction);
 
@@ -36,10 +36,15 @@ setCurrentRecipe();
   updateTimerDisplay();
 };
 
-function formatTime(time){
-  var output = "";
-  var minutes = Math.floor(time / 60);
-  var seconds = time % 60;
+function setCurrentRecipe() {
+  currentRecipe = JSON.parse(sessionStorage.getItem("recipe"));
+
+}
+
+function formatTime(time) {
+  let output = "";
+  let minutes = Math.floor(time / 60);
+  let seconds = time % 60;
   if (seconds < 10) {
     seconds = "0" + seconds;
   }
@@ -47,15 +52,11 @@ function formatTime(time){
   return output;
 }
 
-function setCurrentRecipe(){
-  currentRecipe = JSON.parse(sessionStorage.getItem("recipe"));
-  
-;}
 
 function displayCurrentStep() {
   currentStepText.innerHTML = "Current Step: " + currentRecipe[currentStep].direction;
   if (currentRecipe[currentStep].time > 0) {
-    currentStepTime.innerHTML = "Step time: " + formatTime(currentRecipe[currentStep].time*60);
+    currentStepTime.innerHTML = "Step time: " + formatTime(currentRecipe[currentStep].time * 60);
   }
   else {
     currentStepTime.innerHTML = "-";
@@ -69,14 +70,28 @@ function setTimer() {
 
 }
 
-function start() {
+function startOrPause() {
+  if (currentTime > 0) {
+    if (runningTimer == undefined) {
+      runningTimer = setInterval(runClock, interval);
+      startButton.innerHTML = "Pause";
+    } else {
+      clearTimer();
+    }
+  } else {
+    advanceCurrentStep();
+  }
+}
 
-  runningTimer = setInterval(runClock, interval);
+function clearTimer() {
 
+  clearInterval(runningTimer);
+  runningTimer = undefined;
+  startButton.innerHTML = "Start!";
 }
 
 function updateTimerDisplay() {
-  
+
   timer.innerHTML = formatTime(currentTime);
 }
 
@@ -95,7 +110,7 @@ function runClock() {
 }
 
 function advanceCurrentStep() {
-  clearInterval(runningTimer);
+  clearTimer();
 
   currentStep++;
   updateDirectionListStyle();
@@ -104,32 +119,34 @@ function advanceCurrentStep() {
     displayCurrentStep();
     setTimer();
     updateTimerDisplay();
-    
+
     if (continuous.checked && currentRecipe[currentStep].time > 0) {
-      start();
+      startOrPause();
     }
   } else {
-    
+
     currentStepText.innerHTML = "Done!";
     currentStepTime.innerHTML = "Finished!";
+    currentTime = 0;
+    updateTimerDisplay();
   }
 }
 
 function updateDirectionListStyle() {
-  for (var i = 0; i < directionsList.children.length; i++) {
-    directionsList.children[i].style = "font-weight: normal; font-size: 1em;";
 
+  for (let direction of directionsList.children) {
+    direction.style = "font-weight: normal; font-size: 1em;";
   }
-  if(currentStep < currentRecipe.length)
-{
-  directionsList.children[currentStep].style = "font-weight: bold; font-size: 1.5em;";
+
+  if (currentStep < currentRecipe.length) {
+    directionsList.children[currentStep].style = "font-weight: bold; font-size: 1.5em;";
   }
 }
 
-startButton.addEventListener("click", start);
+startButton.addEventListener("click", startOrPause);
 nextButton.addEventListener("click", function() {
   continuous.checked = false;
-  
+
   advanceCurrentStep();
 
 });

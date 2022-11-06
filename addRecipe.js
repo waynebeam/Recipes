@@ -7,10 +7,18 @@ var pasteBtn = document.getElementById('paste-recipe');
 var recipes = [];
 
 function init() {
-
   loadRecipes();
   buildEmptyRecipe();
 
+}
+
+function loadRecipes() {
+  var recipesRaw = localStorage.getItem('recipes');
+  if (recipesRaw) {
+    recipes = JSON.parse(recipesRaw);
+  } else {
+    recipes = [];
+  }
 }
 
 function buildEmptyRecipe() {
@@ -35,14 +43,6 @@ function addNameToFirstStep(li) {
   li.appendChild(document.createElement("br"))
 }
 
-function loadRecipes() {
-  var recipesRaw = localStorage.getItem('recipes');
-  if (recipesRaw) {
-    recipes = JSON.parse(recipesRaw);
-  } else {
-    recipes = [];
-  }
-}
 
 function addRecipeStep(ol, li) {
   var directionField = document.createElement('input');
@@ -94,7 +94,6 @@ function dataPasted(data) {
     if (validateRecipe(data)) {
       displayAllSteps(data);
     }
-
   }
   catch (e) {
     pasteBtn.innerHTML = 'Invalid!';

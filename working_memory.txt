@@ -1,71 +1,17 @@
-2. make restart button that shows up nonly at the end
+2. make restart button that shows up only at the end
 
 
-7. when clock is running switch start to "pause"
-when paused it goes back to start
-
-
-start keeps calling the event over and over so the timer speeds up. 
-
-next button shoukdnt work if past the end
-
-when skipping past the last step clear the timer, and dont let the start button work
 
 add a third check to make it singular if it is one minute vs minutes vs seconds. 
-
-Maybe "recipes" is too narrow. I wonder if this should re-brand as Multi-Timer. Lots of things could be useful with multitimer besides recipes only. Yes that's a great use-case. But I'm also thinking: deep work sessions, or any number of other things. If it is easy to add steps and save 'recipes' (maybe that is even what a multi-timer file is called) and even easy to share them, then it can just be a useful app to have the ability to write up a series of steps, add timers to them, and it has the option to just run. 
-
-change page names. Make a basic index page for now that will always stay the lander no matter what. Navigate from there to the other pages. 
 
 limit width on page, for example the li under the directions take up like the whole screen so there's a big space between the numbers and the text. 
 
 input elements are supposed to have label elements associated. For accessibility's sake. Simple fix, handle this later. 
 
-page titles
-
-
-Right now I'm saving data to session storage, like what recipe is chosen. But I'm thinking to save the list of recipes to local storage. Is that what I want, or do I want a POST request? Will have to learn how to send and read POST requests in JS anyway. So I'll learn it and see. May be the way to go for like MyConsent. 
-Do we make the choices all in a fieldset, and then it posts it's results and we pull them in. For MyConsent that may be better than having to go and manually save every field into storage. 
-
-can call isNaN or use typeOf to check if input is a number in the validation. 
-
 Each new step will call the validate. If the length of the recipe is 1 (in which case, why are you using MULTI timer, but whatever) then call validate before saving if save if pressed. Otherwise save button should just save the steps, because they were each already validated. 
 
-Do we lock each step in by disabling the input after a new step is added, or allow adding all the steps and then only validate them all at the end
-Most likely validate each step on add, but then leave them edit-able since you may want to change, but on save then validate the whole list.
+when add step is added, valudate the previous step. If it fails then can give a message. 
 
-JSON stringify and parse WORK for an array-of-array-of-objects!
-So I can just push the array of objects that is A recipe to an array of ALL recipes and that is then coded and decoded. I can then loop through that outermost array.
+take outside logic out of the try/catch from the json load. only need to error check when loading that data. after that errors may he unrelated. but we are just validating at that point, not error catching. 
 
-var vs let vs const
-
-for loops shortcut syntax of vs in
-
-append vs appendChild
-
-innerHTML vs innerText
-
-
-Add the pour over and test recipes back in hardcoded, but the name will be 'Pour Over (Sample)', for example. That way it's still there on any device, but you can still save your joint locally. 
-The eventual exporting will still be there.
-
-To copy paste, navigator.writeText() and readText()
-^^That writes to and from the clipboard. So I can make a custom copy paste button for my stringified json data. Then it can be shared.
-
-put a little button next to the recipe in the table of contents. Maybe put a clipboard emoji on it. Or the words "copy reciepe" Then that will copy the string. 
-
-window.location.assign() -> to go to a new page. Like to make my button a link
-^^used location.href (GW suggested it) and it worked. Can experiment with the differences later.
-
-function isJson(str) {
-    try {
-        JSON.parse(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-^^ from Stack Overlow. Can use that to test the paste input if it's JSON. Then if it is, can use it. Later can try to validate each part of it. Once the validate function is built. But for now the save should work. 
-
-when saving a new recipe, either an added one or a pasted or imported one, check if the name exists in storage. if so, then add a number to the end
-Returns null if doesnt exist
+Add delete button next to copy button in table of contents?
