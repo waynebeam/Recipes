@@ -1,16 +1,17 @@
 recipeList = document.getElementById('recipe-list');
 
-var recipes;
+let recipes;
+let sampleRecipes;
 
 function loadRecipes() {
-  var recipesRaw = localStorage.getItem('recipes');
+  let recipesRaw = localStorage.getItem('recipes');
   if (recipesRaw) {
     recipes = JSON.parse(recipesRaw);
   } else {
     recipes = [];
   }
 
-  var pourOverRecipe = [
+  const pourOverRecipe = [
     {
       name: 'Pour Over (Sample)',
       direction: "grind 20g coffee medium-fine",
@@ -37,7 +38,7 @@ function loadRecipes() {
       time: 2
     }
   ];
-  var testRecipie = [
+  const testRecipe = [
     {
       name: "Test Recipe (Sample)",
       direction: "Follow step one to do the thing",
@@ -55,40 +56,46 @@ function loadRecipes() {
 
     }
   ];
-  recipes.push(pourOverRecipe);
-  recipes.push(testRecipie);
+  sampleRecipes = [pourOverRecipe,testRecipe];
 }
 
 
 function buildContents() {
   deleteTableOfContents();
-  
-  recipes.forEach(function(recipe, i) {
-    var li = document.createElement('li');
-    var link = document.createElement('button');
-    link.innerHTML = recipe[0].name;
-    var copy = document.createElement('button');
-    copy.innerHTML = '📋';
-    let deleteBtn = document.createElement('button');
-    deleteBtn.innerHTML = '🚫';
-    li.appendChild(link);
-    li.appendChild(copy);
-    li.appendChild(deleteBtn);
-    recipeList.appendChild(li);
-    link.addEventListener('click', function() {
-      viewRecipePage(i);
-    });
-    copy.addEventListener('click', function() {
-      copyRecipe(recipes[i], this);
-    });
-    deleteBtn.addEventListener('click', function() {
-      if(verifyDeleteRecipe()){
-      deleteRecipe(recipes[i], this);
-      }
 
-    });
+  recipes.forEach(function(recipe, i) {
+    createTableEntry(recipe, i, recipes);
+  });
+  sampleRecipes.forEach(function(recipe, i) {
+    createTableEntry(recipe, i, sampleRecipes);
+  });
+}
+
+function createTableEntry(recipe, i, list){
+  let li = document.createElement('li');
+  let link = document.createElement('button');
+  link.innerHTML = recipe[0].name;
+  let copy = document.createElement('button');
+  copy.innerHTML = '📋';
+  let deleteBtn = document.createElement('button');
+  deleteBtn.innerHTML = '🚫';
+  li.appendChild(link);
+  li.appendChild(copy);
+  li.appendChild(deleteBtn);
+  recipeList.appendChild(li);
+  link.addEventListener('click', function() {
+    viewRecipePage(i, list);
+  });
+  copy.addEventListener('click', function() {
+    copyRecipe(list[i], this);
+  });
+  deleteBtn.addEventListener('click', function() {
+    if(verifyDeleteRecipe()){
+      deleteRecipe(list[i], this);
+    }
 
   });
+
 }
 
 function deleteTableOfContents() {
@@ -100,17 +107,17 @@ function deleteTableOfContents() {
 
 function viewRecipePage(i) {
 
-  var chosenRecipe = recipes[i];
-  var recipeJson = JSON.stringify(chosenRecipe);
+  let chosenRecipe = recipes[i];
+  let recipeJson = JSON.stringify(chosenRecipe);
   sessionStorage.setItem('recipe', recipeJson);
   window.location.href = 'recipe.html';
 }
 
 function copyRecipe(recipe, btn) {
-  var recipeString = JSON.stringify(recipe);
+  let recipeString = JSON.stringify(recipe);
 
-  navigator.clipboard.writeText(recipeString);
-  btn.innerHTML = "Copied!";
+  navigator.clipboard.writeText(recipeString)
+      .then(function() {btn.innerHTML = "Copied!";});
   setTimeout(function() {
     btn.innerHTML = "📋";
 
@@ -118,14 +125,8 @@ function copyRecipe(recipe, btn) {
 }
 
 function verifyDeleteRecipe(){
-  
-  let confirmation = confirm("Are you sure you want to delete this recipe?");
-  
-  if (confirmation) {
-    return true;
-  } else {
-    return false;
-  }
+
+  return confirm("Are you sure you want to delete this recipe?");
 }
 
 function deleteRecipe(recipe, btn) {
@@ -133,7 +134,7 @@ function deleteRecipe(recipe, btn) {
   const index = recipes.indexOf(recipe);
   recipes.splice(index, 1);
   buildContents();
-  //saveRecipes();
+  saveRecipes();
   let recipeList = document.getElementById("recipe-list");
   if (!recipeList.hasChildNodes()) {
     let link = document.createElement('button');

@@ -1,10 +1,10 @@
 
-var newRecipeSteps = document.getElementById('new-recipe-steps');
-var addStepBtn = document.getElementById('add-step');
-var saveBtn = document.getElementById('save-recipe');
-var cancelBtn = document.getElementById('cancel-recipe');
-var pasteBtn = document.getElementById('paste-recipe');
-var recipes = [];
+let newRecipeSteps = document.getElementById('new-recipe-steps');
+let addStepBtn = document.getElementById('add-step');
+let saveBtn = document.getElementById('save-recipe');
+let cancelBtn = document.getElementById('cancel-recipe');
+let pasteBtn = document.getElementById('paste-recipe');
+let recipes = [];
 
 function init() {
   loadRecipes();
@@ -13,7 +13,7 @@ function init() {
 }
 
 function loadRecipes() {
-  var recipesRaw = localStorage.getItem('recipes');
+  let recipesRaw = localStorage.getItem('recipes');
   if (recipesRaw) {
     recipes = JSON.parse(recipesRaw);
   } else {
@@ -22,18 +22,18 @@ function loadRecipes() {
 }
 
 function buildEmptyRecipe() {
-  var firstStep = document.createElement('li');
+  let firstStep = document.createElement('li');
   addNameToFirstStep(firstStep);
 
   addRecipeStep(newRecipeSteps, firstStep);
 }
 
 function addNameToFirstStep(li) {
-  var nameField = document.createElement('input');
+  let nameField = document.createElement('input');
 
   nameField.setAttribute('type', 'text');
   nameField.setAttribute('id', 'name');
-  nameFieldLabel = document.createElement('label');
+  let nameFieldLabel = document.createElement('label');
   nameFieldLabel.setAttribute('for', 'name');
   nameFieldLabel.innerHTML = 'Name of Recipe: ';
 
@@ -45,16 +45,16 @@ function addNameToFirstStep(li) {
 
 
 function addRecipeStep(ol, li) {
-  var directionField = document.createElement('input');
+  let directionField = document.createElement('input');
   directionField.setAttribute('type', 'text');
   directionField.setAttribute('id', 'direction');
-  directionFieldLabel = document.createElement('label');
+  let directionFieldLabel = document.createElement('label');
   directionFieldLabel.setAttribute('for', 'direction');
   directionFieldLabel.innerHTML = 'Next Step: ';
-  var timeField = document.createElement('input');
+  let timeField = document.createElement('input');
   timeField.setAttribute('type', 'number');
   timeField.setAttribute('id', 'time');
-  timeFieldLabel = document.createElement('label');
+  let timeFieldLabel = document.createElement('label');
   timeFieldLabel.setAttribute('for', 'time');
   timeField.setAttribute('min', '0');
   timeField.setAttribute('value', '0');
@@ -79,7 +79,7 @@ function validateStep(li) {
 }
 
 function pasteButtonPressed() {
-  var rawPaste;
+  let rawPaste;
   navigator.clipboard.readText().then(function(text) {
     rawPaste = text;
     dataPasted(rawPaste);
@@ -108,28 +108,26 @@ function dataPasted(data) {
 
 function validateRecipe(recipe) {
   recipe.forEach(function(step) {
-    if ("direction" in step == false) {
+    if (!("direction" in step)) {
       return false;
     }
-    if (step.direction == "") {
+    if (step.direction === "") {
       return false;
     }
-    if ("time" in step == false) {
+    if (!("time" in step)) {
       return false;
     }
     if (isNaN(step.time)) {
       return false;
     }
   });
-  if ("name" in recipe[0] == false) {
-    return false;
-  }
-  return true;
+  return "name" in recipe[0];
+
 }
 
 function displayAllSteps(recipe) {
-  var newOl = document.createElement('ol');
-  var firstStep = document.createElement('li');
+  let newOl = document.createElement('ol');
+  let firstStep = document.createElement('li');
   addNameToFirstStep(firstStep);
   addRecipeStep(newOl, firstStep);
 
@@ -137,13 +135,13 @@ function displayAllSteps(recipe) {
   newOl.childNodes[0].querySelector('#direction').value = recipe[0].direction;
   newOl.childNodes[0].querySelector('#time').value = recipe[0].time;
 
-  for (var i = 1; i < recipe.length; i++) {
-    var li = document.createElement('li');
+  for (let i = 1; i < recipe.length; i++) {
+    let li = document.createElement('li');
     addRecipeStep(newOl, li);
 
     li.querySelector('#direction').value = recipe[i].direction;
     li.querySelector('#time').value = recipe[i].time;
-  };
+  }
 
   newRecipeSteps.replaceWith(newOl);
   newRecipeSteps = newOl;
@@ -156,18 +154,17 @@ addStepBtn.addEventListener('click', function() {
 });
 
 saveBtn.addEventListener('click', function() {
-  recipe = [];
-  var steps = newRecipeSteps.childElementCount;
-  //console.log(newRecipeSteps.childNodes[0].querySelector('#name').value);
-  var step1 = {
+  let recipe = [];
+  let steps = newRecipeSteps.childElementCount;
+  let step1 = {
     name: newRecipeSteps.childNodes[0].querySelector('#name').value,
     direction: newRecipeSteps.childNodes[0].querySelector('#direction').value,
     time: newRecipeSteps.childNodes[0].querySelector('#time').value
   };
   recipe.push(step1);
   if (steps > 1) {
-    for (var i = 1; i < steps; i++) {
-      step = {
+    for (let i = 1; i < steps; i++) {
+     let step = {
         direction: newRecipeSteps.childNodes[i].querySelector('#direction').value,
         time: newRecipeSteps.childNodes[i].querySelector('#time').value
       };
@@ -176,7 +173,8 @@ saveBtn.addEventListener('click', function() {
   }
 
   recipes.push(recipe);
-  localStorage.setItem('recipes', JSON.stringify(recipes));
+  localStorage.setItem('recipes', JSON.stringify(recipes))
+  location.href = "index.html";
 
 });
 

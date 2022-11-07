@@ -8,10 +8,12 @@ limit width on page, for example the li under the directions take up like the wh
 
 input elements are supposed to have label elements associated. For accessibility's sake. Simple fix, handle this later. 
 
-Each new step will call the validate. If the length of the recipe is 1 (in which case, why are you using MULTI timer, but whatever) then call validate before saving if save if pressed. Otherwise save button should just save the steps, because they were each already validated. 
+Each new step will call validate. If the length of the recipe is 1 (in which case, why are you using MULTI timer, but whatever) then call validate before saving if save if pressed. Otherwise save button should just save the steps, because they were each already validated.
 
-when add step is added, valudate the previous step. If it fails then can give a message. 
+when add step is added, validate the previous step. If it fails then can give a message.
 
 take outside logic out of the try/catch from the json load. only need to error check when loading that data. after that errors may he unrelated. but we are just validating at that point, not error catching. 
 
 Add delete button next to copy button in table of contents?
+
+When you add a new recipe it should go back home.
